@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.padur.boersendaten;
+package de.padur.boersendaten.dto;
 
 import java.util.HashMap;
 import java.util.List;
