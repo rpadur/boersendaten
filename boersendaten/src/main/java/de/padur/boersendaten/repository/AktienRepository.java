@@ -16,7 +16,7 @@ import de.padur.boersendaten.bo.Aktie;
  */
 public interface AktienRepository extends MongoRepository<Aktie, String> {
 
-	public Aktie findByWKN(final String wkn);
+	public Aktie findByWkn(final String wkn);
 	
 	public List<Aktie> findByName(final String name);
 	
