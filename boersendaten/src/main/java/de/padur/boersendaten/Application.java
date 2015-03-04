@@ -3,7 +3,6 @@
  */
 package de.padur.boersendaten;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +30,9 @@ public class Application implements CommandLineRunner {
 
 	public void run(String... arg0) throws Exception {
 		// alles löschen
-		aktienrepository.deleteAll();
-
-		final List<Aktie> aktien = sammleAktienDaten();
-		
-		for (Aktie aktie : aktien) {
-			aktienrepository.save(aktie);
-		}
+//		aktienrepository.deleteAll();
+//		final List<String> indizes = getAlleIndizes();
+//		sammleAktienDaten(indizes);
 
 		// fetch all customers
 		System.out.println("Aktien found with findAll():");
@@ -46,19 +41,25 @@ public class Application implements CommandLineRunner {
 			System.out.println(aktie);
 		}
 
-		
-
 	}
 
-	private List<Aktie> sammleAktienDaten() {
-		final List<Aktie> aktien = new ArrayList<Aktie>();
+	private List<String> getAlleIndizes() {
 		final Datensammler sammler = new Datensammler();
-		List<AktienDatenDTO> startEvaluation = sammler.startEvaluation();
-		for (AktienDatenDTO aktienDatenDTO : startEvaluation) {
-			final Aktie aktie = new Aktie(aktienDatenDTO.getName(), aktienDatenDTO.getWkn(), aktienDatenDTO.getIsin());
-			aktien.add(aktie);
+		return sammler.getAllIndizes();
+	}
+
+	private void sammleAktienDaten(List<String> indizes) {
+		final Datensammler sammler = new Datensammler();
+		for (String index : indizes) {
+			List<AktienDatenDTO> startEvaluation = sammler
+					.startEvaluation(index);
+			for (AktienDatenDTO aktienDatenDTO : startEvaluation) {
+				final Aktie aktie = new Aktie(aktienDatenDTO.getName(),
+						aktienDatenDTO.getWkn(), aktienDatenDTO.getIsin());
+				aktienrepository.save(aktie);
+			}
 		}
-		return aktien;
+
 	}
 
 }

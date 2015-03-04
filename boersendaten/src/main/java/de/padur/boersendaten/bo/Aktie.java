@@ -35,5 +35,47 @@ public class Aktie {
 	public String toString() {
 		return String.format("Aktie[Id=%s, Name=%s, WKN=%s, ISIN=%s",id, name, wkn,isin);
 	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @return the wkn
+	 */
+	public String getWkn() {
+		return wkn;
+	}
+
+	/**
+	 * @param wkn the wkn to set
+	 */
+	public void setWkn(String wkn) {
+		this.wkn = wkn;
+	}
+
+	/**
+	 * @return the isin
+	 */
+	public String getIsin() {
+		return isin;
+	}
+
+	/**
+	 * @param isin the isin to set
+	 */
+	public void setIsin(String isin) {
+		this.isin = isin;
+	}
 	
 }

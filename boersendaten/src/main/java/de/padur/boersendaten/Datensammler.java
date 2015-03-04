@@ -4,9 +4,10 @@
 package de.padur.boersendaten;
 
 import java.io.IOException;
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,7 +29,14 @@ public class Datensammler {
 
 	public static void main(String[] args) {
 		final Datensammler sammler = new Datensammler();
-		sammler.startEvaluation();
+		final List<String> indizes = sammler.getAllIndizes();
+		for (String index : indizes) {
+			List<AktienDatenDTO> startEvaluation = sammler.startEvaluation(index);
+			for (AktienDatenDTO aktienDatenDTO : startEvaluation) {
+				System.out.println(aktienDatenDTO);
+			}
+		}
+		
 
 	}
 
@@ -38,8 +46,8 @@ public class Datensammler {
 			String linkToStock = link.attr("href");
 			if (linkToStock.startsWith("/aktien")) {
 				// get the value from href attribute
-				System.out.println("\nlink : " + linkToStock);
-				System.out.println("Aktie : " + link.text());
+				// System.out.println("\nlink : " + linkToStock);
+				// System.out.println("Aktie : " + link.text());
 				final AktienDatenDTO aktienDto = new AktienDatenDTO();
 				aktienDto.setName(link.text());
 				final Document customData = getPage(BASE_URL + linkToStock);
@@ -53,14 +61,15 @@ public class Datensammler {
 	}
 
 	private void evaluateStockData(Document doc, AktienDatenDTO aktienDto) {
-		Elements aktienDaten = doc.select("table:contains(Bezeichnung) > tbody > tr");
-		System.out.println(aktienDaten.text());
+		Elements aktienDaten = doc
+				.select("table:contains(Bezeichnung) > tbody > tr");
+		// System.out.println(aktienDaten.text());
 		for (Element element : aktienDaten) {
 			Elements select = element.select("td");
-			if(select.get(0).text().equals("WKN")){
+			if (select.get(0).text().equals("WKN")) {
 				aktienDto.setWkn(select.get(1).text());
 			}
-			if(select.get(0).text().equals("ISIN")){
+			if (select.get(0).text().equals("ISIN")) {
 				aktienDto.setIsin(select.get(1).text());
 			}
 		}
@@ -69,7 +78,7 @@ public class Datensammler {
 	private void evaluateStockPageFundamentalData(final Document doc,
 			AktienDatenDTO dto) {
 		String title = doc.title();
-		System.out.println("title : " + title);
+		// System.out.println("title : " + title);
 
 		Elements fundametaldaten = doc.select("table:contains(2013) > tbody");
 		for (Element daten : fundametaldaten) {
@@ -95,21 +104,40 @@ public class Datensammler {
 		}
 	}
 
-	public List<AktienDatenDTO> startEvaluation() {
-		Document doc;
+	public List<String> getAllIndizes() {
+		final Set<String> indizes = new HashSet<String>();
+		try {
+			Document indexPage = getPage(BASE_URL + "/kurse-und-charts");
+			Elements links = indexPage.select("a[href]");
+			for (Element index : links) {
+
+				String linkToStock = index.attr("href");
+				if (linkToStock.startsWith("/indizes")
+						&& !linkToStock.endsWith("/komponenten")) {
+					System.out.println("\nlink : " + linkToStock);
+					System.out.println("Index : " + index.text());
+					indizes.add(linkToStock);
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<String>(indizes);
+	}
+
+	public List<AktienDatenDTO> startEvaluation(final String index) {
 		try {
 
-			// need http protocol
-			doc = getPage(BASE_URL
-					+ "/indizes/dax-performance-index-kurs,133962/komponenten");
+			String url = BASE_URL + index + "/komponenten";
+			System.out.println(url);
+			final Document doc = getPage(url);
 			evaluateIndexPage(doc);
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		for (AktienDatenDTO aktienDatenDTO : aktien) {
-			System.out.println(aktienDatenDTO);
-		}
+
 		return aktien;
 
 	}
