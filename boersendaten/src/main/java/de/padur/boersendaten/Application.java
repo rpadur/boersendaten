@@ -3,12 +3,16 @@
  */
 package de.padur.boersendaten;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.padur.boersendaten.bo.Aktie;
+import de.padur.boersendaten.dto.AktienDatenDTO;
 import de.padur.boersendaten.repository.AktienRepository;
 
 /**
@@ -29,28 +33,32 @@ public class Application implements CommandLineRunner {
 		// alles löschen
 		aktienrepository.deleteAll();
 
-		aktienrepository.save(new Aktie("Bayer AG", "BAY001", "DE000BAY0017"));
-		aktienrepository.save(new Aktie("BayWa AG", "519406", "DE0005194062"));
+		final List<Aktie> aktien = sammleAktienDaten();
+		
+		for (Aktie aktie : aktien) {
+			aktienrepository.save(aktie);
+		}
 
 		// fetch all customers
 		System.out.println("Aktien found with findAll():");
 		System.out.println("-------------------------------");
-		for (Aktie customer : aktienrepository.findAll()) {
-			System.out.println(customer);
-		}
-		System.out.println();
-
-		// fetch an individual customer
-		System.out.println("Aktien found with findByWKN('BAY001'):");
-		System.out.println("--------------------------------");
-		System.out.println(aktienrepository.findByWkn("BAY001"));
-
-		System.out.println("Aktien found with findByName('Bay'):");
-		System.out.println("--------------------------------");
-		for (Aktie aktie : aktienrepository.findByName("Bay*")) {
+		for (Aktie aktie : aktienrepository.findAll()) {
 			System.out.println(aktie);
 		}
 
+		
+
+	}
+
+	private List<Aktie> sammleAktienDaten() {
+		final List<Aktie> aktien = new ArrayList<Aktie>();
+		final Datensammler sammler = new Datensammler();
+		List<AktienDatenDTO> startEvaluation = sammler.startEvaluation();
+		for (AktienDatenDTO aktienDatenDTO : startEvaluation) {
+			final Aktie aktie = new Aktie(aktienDatenDTO.getName(), aktienDatenDTO.getWkn(), aktienDatenDTO.getIsin());
+			aktien.add(aktie);
+		}
+		return aktien;
 	}
 
 }
