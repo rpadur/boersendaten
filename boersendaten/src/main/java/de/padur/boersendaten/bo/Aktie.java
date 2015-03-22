@@ -3,6 +3,11 @@
  */
 package de.padur.boersendaten.bo;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.springframework.data.annotation.Id;
 
 
@@ -18,10 +23,16 @@ public class Aktie {
 	private String wkn;
 	private String isin;
 	
+	
+	
+	private Map<String, Fundamentaldaten> jahreswerte = new HashMap<String, Fundamentaldaten>();
+	
 	public Aktie(){
 		
 	}
 
+	
+	
 	public Aktie(String name, String wkn, String isin){
 		this.name = name;
 		this.wkn = wkn;
@@ -33,7 +44,12 @@ public class Aktie {
 	
 	@Override
 	public String toString() {
-		return String.format("Aktie[Id=%s, Name=%s, WKN=%s, ISIN=%s",id, name, wkn,isin);
+		final StringBuffer ergebnis =  new StringBuffer(String.format("Aktie[Id=%s, Name=%s, WKN=%s, ISIN=%s \n",id, name, wkn,isin));
+		Set<Entry<String, Fundamentaldaten>> daten = getJahreswerte().entrySet();
+		for (Entry<String, Fundamentaldaten> entry : daten) {
+			ergebnis.append(entry.getKey()).append('\n').append(entry.getValue().toString());
+		}
+		return ergebnis.toString();
 	}
 
 	/**
@@ -76,6 +92,15 @@ public class Aktie {
 	 */
 	public void setIsin(String isin) {
 		this.isin = isin;
+	}
+
+
+
+	/**
+	 * @return the jahreswerte
+	 */
+	public Map<String, Fundamentaldaten> getJahreswerte() {
+		return jahreswerte;
 	}
 	
 }

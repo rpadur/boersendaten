@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.padur.boersendaten.bo.Aktie;
+import de.padur.boersendaten.converter.AktienDTONachAktieConverter;
 import de.padur.boersendaten.dto.AktienDatenDTO;
 import de.padur.boersendaten.repository.AktienRepository;
 
@@ -24,6 +25,9 @@ public class Application implements CommandLineRunner {
 	@Autowired
 	private AktienRepository aktienrepository;
 
+	@Autowired
+	private AktienDTONachAktieConverter aktienDTOConverter;
+	
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class);
 	}
@@ -31,15 +35,15 @@ public class Application implements CommandLineRunner {
 	public void run(String... arg0) throws Exception {
 		// alles löschen
 //		aktienrepository.deleteAll();
-//		final List<String> indizes = getAlleIndizes();
-//		sammleAktienDaten(indizes);
+		final List<String> indizes = getAlleIndizes();
+		sammleAktienDaten(indizes);
 
-		// fetch all customers
-		System.out.println("Aktien found with findAll():");
-		System.out.println("-------------------------------");
-		for (Aktie aktie : aktienrepository.findAll()) {
-			System.out.println(aktie);
-		}
+//		// fetch all customers
+//		System.out.println("Aktien found with findAll():");
+//		System.out.println("-------------------------------");
+//		for (Aktie aktie : aktienrepository.findAll()) {
+//			System.out.println(aktie);
+//		}
 
 	}
 
@@ -54,9 +58,8 @@ public class Application implements CommandLineRunner {
 			List<AktienDatenDTO> startEvaluation = sammler
 					.startEvaluation(index);
 			for (AktienDatenDTO aktienDatenDTO : startEvaluation) {
-				final Aktie aktie = new Aktie(aktienDatenDTO.getName(),
-						aktienDatenDTO.getWkn(), aktienDatenDTO.getIsin());
-				aktienrepository.save(aktie);
+				final Aktie aktie = aktienDTOConverter.convertAktienDTO(aktienDatenDTO);
+				//aktienrepository.save(aktie);
 			}
 		}
 

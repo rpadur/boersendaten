@@ -3,7 +3,10 @@
  */
 package de.padur.boersendaten;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +16,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import de.padur.boersendaten.datenquelle.godmodetrader.FundamentalDatenErmittler;
 import de.padur.boersendaten.dto.AktienDatenDTO;
 import de.padur.boersendaten.dto.JahresWertTupel;
 
@@ -25,18 +30,19 @@ public class Datensammler {
 
 	private List<AktienDatenDTO> aktien = new ArrayList<AktienDatenDTO>();
 	private static String BASE_URL = "http://www.godmode-trader.de";
-	private Elements tabellendaten;
+	@Autowired
+	private FundamentalDatenErmittler fundamentalDatenermittler;
 
 	public static void main(String[] args) {
 		final Datensammler sammler = new Datensammler();
 		final List<String> indizes = sammler.getAllIndizes();
 		for (String index : indizes) {
-			List<AktienDatenDTO> startEvaluation = sammler.startEvaluation(index);
+			List<AktienDatenDTO> startEvaluation = sammler
+					.startEvaluation(index);
 			for (AktienDatenDTO aktienDatenDTO : startEvaluation) {
 				System.out.println(aktienDatenDTO);
 			}
 		}
-		
 
 	}
 
@@ -54,7 +60,7 @@ public class Datensammler {
 				evaluateStockData(customData, aktienDto);
 				final Document fundamentalData = getPage(BASE_URL + linkToStock
 						+ "/kennzahlen");
-				evaluateStockPageFundamentalData(fundamentalData, aktienDto);
+				fundamentalDatenermittler.evaluateStockPageFundamentalData(fundamentalData, aktienDto);
 				aktien.add(aktienDto);
 			}
 		}
@@ -75,34 +81,7 @@ public class Datensammler {
 		}
 	}
 
-	private void evaluateStockPageFundamentalData(final Document doc,
-			AktienDatenDTO dto) {
-		String title = doc.title();
-		// System.out.println("title : " + title);
-
-		Elements fundametaldaten = doc.select("table:contains(2013) > tbody");
-		for (Element daten : fundametaldaten) {
-
-			// zuerst kommt der Tabellenkopf
-			tabellendaten = daten.select("tr");
-			for (Element element : tabellendaten) {
-				Elements spaltendaten = element.select("td");
-				if (spaltendaten.size() != 3) {
-					continue;
-				}
-
-				final JahresWertTupel tupel2013 = new JahresWertTupel("2013",
-						spaltendaten.get(1).text());
-				final JahresWertTupel tupel2014 = new JahresWertTupel("2014",
-						spaltendaten.get(2).text());
-				final List<JahresWertTupel> tupel = new ArrayList<JahresWertTupel>();
-				tupel.add(tupel2013);
-				tupel.add(tupel2014);
-				dto.getDaten().put(spaltendaten.get(0).text(), tupel);
-			}
-
-		}
-	}
+	
 
 	public List<String> getAllIndizes() {
 		final Set<String> indizes = new HashSet<String>();
@@ -143,7 +122,24 @@ public class Datensammler {
 	}
 
 	private Document getPage(String url) throws IOException {
-		final Document doc = Jsoup.connect(url).get();
+
+		System.out.println(url);
+		String filename = url.replace(BASE_URL, "").replaceAll("/","_");
+		File file = new File("D:\\privat\\boersendaten_workspace\\testdaten\\" +filename+".html");
+		System.out.println(file.getAbsolutePath());
+		FileWriter writer = new FileWriter(file, false);
+		writer.write("Test");
+		Document doc = null;
+		try {
+			doc = Jsoup.connect(url).timeout(500000).get();
+		} catch (ConnectException e) {
+			System.out.println(e);
+		}
+		if (doc != null) {
+			writer.write(doc.html());
+		}
+		writer.flush();
+		writer.close();
 		return doc;
 	}
 }
