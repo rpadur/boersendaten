@@ -5,6 +5,8 @@ package de.padur.boersendaten.converter;
 
 
 
+import org.junit.Test;
+
 import de.padur.boersendaten.TestHelper;
 import de.padur.boersendaten.bo.Aktie;
 import de.padur.boersendaten.dto.AktienDatenDTO;
@@ -27,6 +29,7 @@ public class AktienDTONachAktieConverterTest {
 		}
 	}
 	
+	@Test
 	public void testConvertFundamentaldaten() throws Exception {
 		TestHelper helper = new TestHelper();
 		AktienDatenDTO dto = helper.getBeispielFundamentalDatenAktienDatenDTO();

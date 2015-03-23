@@ -9,7 +9,8 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 
 import de.padur.boersendaten.dto.AktienDatenDTO;
 import de.padur.boersendaten.dto.JahresWertTupel;
@@ -18,8 +19,10 @@ import de.padur.boersendaten.dto.JahresWertTupel;
  * @author ronald.padur
  *
  */
-@Component
+@Service
 public class FundamentalDatenErmittler {
+	
+	
 	
 	public void evaluateStockPageFundamentalData(final Document doc,
 			AktienDatenDTO dto) {

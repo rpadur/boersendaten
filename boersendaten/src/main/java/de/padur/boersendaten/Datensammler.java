@@ -17,20 +17,21 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import de.padur.boersendaten.datenquelle.godmodetrader.FundamentalDatenErmittler;
 import de.padur.boersendaten.dto.AktienDatenDTO;
-import de.padur.boersendaten.dto.JahresWertTupel;
 
 /**
  * @author Ronald
  *
  */
+@Component
 public class Datensammler {
 
 	private List<AktienDatenDTO> aktien = new ArrayList<AktienDatenDTO>();
 	private static String BASE_URL = "http://www.godmode-trader.de";
-	@Autowired
+	@Autowired(required=true)
 	private FundamentalDatenErmittler fundamentalDatenermittler;
 
 	public static void main(String[] args) {
