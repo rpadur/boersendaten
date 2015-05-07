@@ -31,7 +31,7 @@ public class Datensammler {
 
 	private List<AktienDatenDTO> aktien = new ArrayList<AktienDatenDTO>();
 	private static String BASE_URL = "http://www.godmode-trader.de";
-	@Autowired(required=true)
+	@Autowired(required = true)
 	private FundamentalDatenErmittler fundamentalDatenermittler;
 
 	public static void main(String[] args) {
@@ -47,7 +47,7 @@ public class Datensammler {
 
 	}
 
-	private void evaluateIndexPage(final Document doc) throws IOException {
+	public void evaluateIndexPage(final Document doc) throws IOException {
 		Elements links = doc.select("a[href]");
 		for (Element link : links) {
 			String linkToStock = link.attr("href");
@@ -61,13 +61,19 @@ public class Datensammler {
 				evaluateStockData(customData, aktienDto);
 				final Document fundamentalData = getPage(BASE_URL + linkToStock
 						+ "/kennzahlen");
-				fundamentalDatenermittler.evaluateStockPageFundamentalData(fundamentalData, aktienDto);
+				evaluateFundamentalData(fundamentalData, aktienDto);
 				aktien.add(aktienDto);
 			}
 		}
 	}
 
-	private void evaluateStockData(Document doc, AktienDatenDTO aktienDto) {
+	public void evaluateFundamentalData(final Document fundamentalData,
+			final AktienDatenDTO aktienDto) {
+		fundamentalDatenermittler.evaluateStockPageFundamentalData(
+				fundamentalData, aktienDto);
+	}
+
+	public void evaluateStockData(Document doc, AktienDatenDTO aktienDto) {
 		Elements aktienDaten = doc
 				.select("table:contains(Bezeichnung) > tbody > tr");
 		// System.out.println(aktienDaten.text());
@@ -79,10 +85,14 @@ public class Datensammler {
 			if (select.get(0).text().equals("ISIN")) {
 				aktienDto.setIsin(select.get(1).text());
 			}
+			if (select.get(0).text().equals("Anzahl Aktien")) {
+				aktienDto.setAnzahlAktien(select.get(1).text());
+			}
+			if (select.get(0).text().equals("Sektor")) {
+				aktienDto.setSektor(select.get(1).text());
+			}
 		}
 	}
-
-	
 
 	public List<String> getAllIndizes() {
 		final Set<String> indizes = new HashSet<String>();
@@ -125,8 +135,9 @@ public class Datensammler {
 	private Document getPage(String url) throws IOException {
 
 		System.out.println(url);
-		String filename = url.replace(BASE_URL, "").replaceAll("/","_");
-		File file = new File("D:\\privat\\boersendaten_workspace\\testdaten\\" +filename+".html");
+		String filename = url.replace(BASE_URL, "").replaceAll("/", "_");
+		File file = new File("D:\\privat\\boersendaten_workspace\\testdaten\\"
+				+ filename + ".html");
 		System.out.println(file.getAbsolutePath());
 		FileWriter writer = new FileWriter(file, false);
 		writer.write("Test");

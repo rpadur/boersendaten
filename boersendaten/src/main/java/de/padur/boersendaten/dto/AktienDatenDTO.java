@@ -16,6 +16,10 @@ public class AktienDatenDTO {
 	private String name;
 	private String wkn;
 	private String isin;
+	private String id;
+	private String anzahlAktien;
+	private String sektor;
+	
 	private final Map<String, List<JahresWertTupel>> daten = new HashMap<String, List<JahresWertTupel>>();
 
 	public String getName() {
@@ -63,5 +67,41 @@ public class AktienDatenDTO {
 	 */
 	public void setIsin(String isin) {
 		this.isin = isin;
+	}
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+	/**
+	 * @return the anzahlAktien
+	 */
+	public String getAnzahlAktien() {
+		return anzahlAktien;
+	}
+	/**
+	 * @param anzahlAktien the anzahlAktien to set
+	 */
+	public void setAnzahlAktien(String anzahlAktien) {
+		this.anzahlAktien = anzahlAktien;
+	}
+	/**
+	 * @return the sektor
+	 */
+	public String getSektor() {
+		return sektor;
+	}
+	/**
+	 * @param sektor the sektor to set
+	 */
+	public void setSektor(String sektor) {
+		this.sektor = sektor;
 	}
 }

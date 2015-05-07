@@ -6,6 +6,7 @@ package de.padur.boersendaten.converter;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import de.padur.boersendaten.bo.Aktie;
@@ -23,6 +24,11 @@ public class AktienDTONachAktieConverter {
 	public Aktie convertAktienDTO(final AktienDatenDTO aktienDatenDTO) {
 		final Aktie aktie = new Aktie(aktienDatenDTO.getName(),
 				aktienDatenDTO.getWkn(), aktienDatenDTO.getIsin());
+		String anzahlAktien = aktienDatenDTO.getAnzahlAktien().replace(".", "").replace(",", ".");
+		System.out.println(Double.valueOf(anzahlAktien).longValue());
+			aktie.setAnzahlAktien(Double.valueOf(
+					anzahlAktien).longValue());
+		aktie.setSektor(aktienDatenDTO.getSektor());
 		convertJahresdaten(aktie, aktienDatenDTO.getDaten());
 		return aktie;
 
