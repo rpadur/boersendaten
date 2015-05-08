@@ -10,47 +10,48 @@ import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author ronald.padur
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Aktie {
 	@Id
 	private String id;
 	private String name;
-	
+
 	private String wkn;
 	private String isin;
-	
+
 	private String sektor;
 	private long anzahlAktien;
-	
-	
+
 	private Map<String, Fundamentaldaten> jahreswerte = new HashMap<String, Fundamentaldaten>();
-	
-	public Aktie(){
-		
+
+	public Aktie() {
+
 	}
 
-	
-	
-	public Aktie(String name, String wkn, String isin){
+	public Aktie(String name, String wkn, String isin) {
 		this.name = name;
 		this.wkn = wkn;
 		this.isin = isin;
-		
+
 	}
-	
-	
-	
+
 	@Override
 	public String toString() {
-		final StringBuffer ergebnis =  new StringBuffer(String.format("Aktie[Id=%s, Name=%s, WKN=%s, ISIN=%s, Sektor=%s \n",id, name, wkn,isin, sektor));
+		final StringBuffer ergebnis = new StringBuffer(String.format(
+				"Aktie[Id=%s, Name=%s, WKN=%s, ISIN=%s, Sektor=%s \n", id,
+				name, wkn, isin, sektor));
 		ergebnis.append("Anzahl Aktien=").append(anzahlAktien).append('\n');
-		Set<Entry<String, Fundamentaldaten>> daten = getJahreswerte().entrySet();
+		Set<Entry<String, Fundamentaldaten>> daten = getJahreswerte()
+				.entrySet();
 		for (Entry<String, Fundamentaldaten> entry : daten) {
-			ergebnis.append(entry.getKey()).append('\n').append(entry.getValue().toString());
+			ergebnis.append(entry.getKey()).append('\n')
+					.append(entry.getValue().toString());
 		}
 		return ergebnis.toString();
 	}
@@ -63,7 +64,8 @@ public class Aktie {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -77,7 +79,8 @@ public class Aktie {
 	}
 
 	/**
-	 * @param wkn the wkn to set
+	 * @param wkn
+	 *            the wkn to set
 	 */
 	public void setWkn(String wkn) {
 		this.wkn = wkn;
@@ -91,13 +94,12 @@ public class Aktie {
 	}
 
 	/**
-	 * @param isin the isin to set
+	 * @param isin
+	 *            the isin to set
 	 */
 	public void setIsin(String isin) {
 		this.isin = isin;
 	}
-
-
 
 	/**
 	 * @return the jahreswerte
@@ -106,8 +108,6 @@ public class Aktie {
 		return jahreswerte;
 	}
 
-
-
 	/**
 	 * @return the sektor
 	 */
@@ -115,16 +115,13 @@ public class Aktie {
 		return sektor;
 	}
 
-
-
 	/**
-	 * @param sektor the sektor to set
+	 * @param sektor
+	 *            the sektor to set
 	 */
 	public void setSektor(String sektor) {
 		this.sektor = sektor;
 	}
-
-
 
 	/**
 	 * @return the anzahlAktien
@@ -133,13 +130,12 @@ public class Aktie {
 		return anzahlAktien;
 	}
 
-
-
 	/**
-	 * @param anzahlAktien the anzahlAktien to set
+	 * @param anzahlAktien
+	 *            the anzahlAktien to set
 	 */
 	public void setAnzahlAktien(long anzahlAktien) {
 		this.anzahlAktien = anzahlAktien;
 	}
-	
+
 }

@@ -17,13 +17,13 @@ import de.padur.boersendaten.converter.AktienDTONachAktieConverter;
 import de.padur.boersendaten.converter.FileToDocumementConverter;
 import de.padur.boersendaten.dto.AktienDatenDTO;
 import de.padur.boersendaten.repository.AktienRepository;
-import de.padur.boersendaten.web.Page;
+import de.padur.boersendaten.web.AktieRestDTO;
 
 /**
  * @author ronald.padur
  *
  */
-@SpringBootApplication
+
 public class Application implements CommandLineRunner {
 
 	@Autowired
@@ -54,8 +54,7 @@ public class Application implements CommandLineRunner {
 			System.out.println(aktie);
 		}
 		System.out.println("Es gibt "+aktien.size()+" Aktien.");
-		RestTemplate template = new RestTemplate();
-		template.getForObject("localhost:8080/aktien", Page.class);
+		
 
 	}
 
